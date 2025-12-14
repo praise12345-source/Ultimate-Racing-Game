@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ Settings - Ultimate Racing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            font-family: 'Orbitron', monospace; 
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: 3px solid #ffd700;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            z-index: 1000;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 100px auto 50px;
+            padding: 40px;
+            background: rgba(0,0,0,0.7);
+            border: 4px solid #ffd700;
+            border-radius: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 48px;
+            color: #ffd700;
+            margin-bottom: 40px;
+        }
+        
+        .setting-group {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+        
+        .setting-group h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+        
+        .setting-item label {
+            font-weight: 700;
+            flex: 1;
+        }
+        
+        .setting-item input[type="range"],
+        .setting-item select {
+            flex: 2;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            background: #222;
+            color: white;
+        }
+        
+        .setting-item .value {
+            flex: 1;
+            text-align: right;
+            color: #ffd700;
+            font-weight: 800;
+        }
+        
+        .save-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: 4px solid #ffd700;
+            color: white;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+        
+        .save-btn:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">⬅️ Back to Menu</a>
+    
+    <!-- IMAGE PLACEHOLDER: Replace src with your settings background image path -->
+    <div class="page-background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2;">
+        <img src="images/settings-background.png" alt="Settings Background" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';">
+    </div>
+    
+    <div class="container">
+        <!-- IMAGE PLACEHOLDER: Replace src with your settings header logo/image path -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="images/settings-header.png" alt="Settings Header" style="max-width: 400px; width: 100%; height: auto;" onerror="this.style.display='none';">
+        </div>
+        <h1>⚙️ SETTINGS</h1>
+        
+        <div class="setting-group">
+            <h2>🎵 Audio</h2>
+            <div class="setting-item">
+                <label>Music Volume</label>
+                <input type="range" id="musicVol" min="0" max="1" step="0.01" value="0.35" oninput="updateValue('musicVol', this.value)" />
+                <span class="value" id="musicVolVal">35%</span>
+            </div>
+            <div class="setting-item">
+                <label>SFX Volume</label>
+                <input type="range" id="sfxVol" min="0" max="1" step="0.01" value="0.6" oninput="updateValue('sfxVol', this.value)" />
+                <span class="value" id="sfxVolVal">60%</span>
+            </div>
+        </div>
+        
+        <div class="setting-group">
+            <h2>🎮 Graphics</h2>
+            <div class="setting-item">
+                <label>Graphics Quality</label>
+                <select id="gfxQuality">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                    <option value="ultra">Ultra</option>
+                </select>
+                <span class="value"></span>
+            </div>
+            <div class="setting-item">
+                <label>Bloom Effect</label>
+                <input type="range" id="bloomStrength" min="0" max="2" step="0.05" value="0.8" oninput="updateValue('bloomStrength', this.value)" />
+                <span class="value" id="bloomStrengthVal">80%</span>
+            </div>
+            <div class="setting-item">
+                <label>Shadows</label>
+                <select id="shadows">
+                    <option value="off">Off</option>
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                </select>
+                <span class="value"></span>
+            </div>
+        </div>
+        
+        <div class="setting-group">
+            <h2>🏎️ Controls</h2>
+            <div class="setting-item">
+                <label>Control Scheme</label>
+                <select id="controls">
+                    <option value="wasd" selected>WASD</option>
+                    <option value="arrows">Arrow Keys</option>
+                    <option value="both">Both</option>
+                </select>
+                <span class="value"></span>
+            </div>
+            <div class="setting-item">
+                <label>Mouse Sensitivity</label>
+                <input type="range" id="mouseSens" min="0.1" max="2" step="0.1" value="1" oninput="updateValue('mouseSens', this.value)" />
+                <span class="value" id="mouseSensVal">100%</span>
+            </div>
+        </div>
+        
+        <button class="save-btn" onclick="saveSettings()">💾 SAVE SETTINGS</button>
+    </div>
+    
+    <script>
+        function updateValue(id, val) {
+            const valElement = document.getElementById(id + 'Val');
+            if (valElement) {
+                const percent = (parseFloat(val) * 100).toFixed(0);
+                valElement.textContent = percent + '%';
+            }
+        }
+        
+        function saveSettings() {
+            const settings = {
+                musicVol: parseFloat(document.getElementById('musicVol').value),
+                sfxVol: parseFloat(document.getElementById('sfxVol').value),
+                gfxQuality: document.getElementById('gfxQuality').value,
+                bloomStrength: parseFloat(document.getElementById('bloomStrength').value),
+                shadows: document.getElementById('shadows').value,
+                controls: document.getElementById('controls').value,
+                mouseSens: parseFloat(document.getElementById('mouseSens').value)
+            };
+            localStorage.setItem('gameSettings', JSON.stringify(settings));
+            alert('✅ Settings saved!');
+        }
+        
+        function loadSettings() {
+            try {
+                const settings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+                if (settings.musicVol !== undefined) document.getElementById('musicVol').value = settings.musicVol;
+                if (settings.sfxVol !== undefined) document.getElementById('sfxVol').value = settings.sfxVol;
+                if (settings.gfxQuality) document.getElementById('gfxQuality').value = settings.gfxQuality;
+                if (settings.bloomStrength !== undefined) document.getElementById('bloomStrength').value = settings.bloomStrength;
+                if (settings.shadows) document.getElementById('shadows').value = settings.shadows;
+                if (settings.controls) document.getElementById('controls').value = settings.controls;
+                if (settings.mouseSens !== undefined) document.getElementById('mouseSens').value = settings.mouseSens;
+                
+                // Update display values
+                updateValue('musicVol', document.getElementById('musicVol').value);
+                updateValue('sfxVol', document.getElementById('sfxVol').value);
+                updateValue('bloomStrength', document.getElementById('bloomStrength').value);
+                updateValue('mouseSens', document.getElementById('mouseSens').value);
+            } catch (e) {
+                console.warn('Failed to load settings', e);
+            }
+        }
+        
+        loadSettings();
+    </script>
+</body>
+</html>

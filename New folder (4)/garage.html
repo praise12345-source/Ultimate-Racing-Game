@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏪 Garage - Ultimate Racing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            font-family: 'Orbitron', monospace; 
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: 3px solid #ffd700;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            z-index: 1000;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 80px 20px 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 48px;
+            color: #ffd700;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255,215,0,0.8);
+        }
+        
+        .garage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .car-card {
+            background: rgba(0,0,0,0.7);
+            border: 4px solid #ffd700;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .car-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255,215,0,0.4);
+        }
+        
+        .car-card.selected {
+            background: rgba(255,215,0,0.2);
+            border-color: #ffff00;
+        }
+        
+        .car-card.owned {
+            border-color: #00ff00;
+        }
+        
+        .car-card .car-model-viewer {
+            width: 100%;
+            height: 250px;
+            background: rgba(20,20,30,0.9);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .car-card h3 {
+            color: #ffd700;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .car-card .brand {
+            color: #aaa;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .car-card .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .car-card .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .car-card .price {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffd700;
+            margin: 15px 0;
+        }
+        
+        .car-card button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: 3px solid #ffd700;
+            color: white;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .car-card button:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+        
+        .car-card button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">⬅️ Back to Menu</a>
+    
+    <!-- IMAGE PLACEHOLDER: Replace src with your garage background image path -->
+    <div class="page-background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2;">
+        <img src="images/garage-background.png" alt="Garage Background" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';">
+    </div>
+    
+    <div class="container">
+        <!-- IMAGE PLACEHOLDER: Replace src with your garage header logo/image path -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="images/garage-header.png" alt="Garage Header" style="max-width: 400px; width: 100%; height: auto;" onerror="this.style.display='none';">
+        </div>
+        <h1>🏪 GARAGE</h1>
+        <div class="garage-grid" id="carGrid"></div>
+    </div>
+    
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
+        
+        const carDatabase = [
+            { id: 'sports', name: 'Lightning Sports', brand: 'Generic', price: 1000, speed: 1.0, handling: 1.0, color: 0xff0000, description: 'Your starter car with balanced performance' },
+            { id: 'truck', name: 'Monster Beast', brand: 'Generic', price: 500, speed: 0.7, handling: 1.3, color: 0x8B4513, description: 'Heavy but durable, great handling' },
+            { id: 'classic', name: 'Vintage Classic', brand: 'Generic', price: 800, speed: 0.9, handling: 1.1, color: 0x0000ff, description: 'Classic style with modern performance' },
+            { id: 'super', name: 'Hyper Super', brand: 'Generic', price: 2000, speed: 1.3, handling: 1.2, color: 0xffd700, description: 'High-performance supercar' },
+            { id: 'formula', name: 'Formula Racer', brand: 'Generic', price: 5000, speed: 1.5, handling: 1.4, color: 0x00ff00, description: 'Professional racing machine' },
+            { id: 'lamborghini', name: 'Lamborghini Aventador', brand: 'Lamborghini', price: 10000, speed: 1.8, handling: 1.3, color: 0xff0000, description: 'Italian supercar with incredible speed and iconic design', specialFeatures: true },
+            { id: 'bugatti', name: 'Bugatti Chiron', brand: 'Bugatti', price: 15000, speed: 2.0, handling: 1.2, color: 0x000000, description: 'The ultimate speed machine - fastest car in the game', specialFeatures: true },
+            { id: 'ferrari', name: 'Ferrari F8 Tributo', brand: 'Ferrari', price: 12000, speed: 1.7, handling: 1.5, color: 0xff0000, description: 'Perfect balance of speed and handling - racing legend', specialFeatures: true }
+        ];
+        
+        function renderGarage() {
+            const grid = document.getElementById('carGrid');
+            const progress = JSON.parse(localStorage.getItem('racingGameProgress') || '{}');
+            const owned = progress.ownedCars || ['sports'];
+            const current = progress.currentCar || 'sports';
+            
+            grid.innerHTML = '';
+            
+            carDatabase.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'car-card';
+                if (owned.includes(car.id)) card.classList.add('owned');
+                if (current === car.id) card.classList.add('selected');
+                
+                const viewer = document.createElement('div');
+                viewer.className = 'car-model-viewer';
+                viewer.id = `viewer-${car.id}`;
+                
+                card.innerHTML = `
+                    ${viewer.outerHTML}
+                    <h3>${car.name}</h3>
+                    <div class="brand">🏎️ ${car.brand}</div>
+                    <div class="stats">
+                        <div class="stat">⚡ ${(car.speed * 100).toFixed(0)}%</div>
+                        <div class="stat">🎯 ${(car.handling * 100).toFixed(0)}%</div>
+                        <div class="stat">💰 ${car.price}</div>
+                    </div>
+                    <div class="price">${owned.includes(car.id) ? '✅ OWNED' : `💰 ${car.price} coins`}</div>
+                    <button ${owned.includes(car.id) ? `onclick="selectCar('${car.id}')"` : `onclick="buyCar('${car.id}')"`} ${owned.includes(car.id) ? '' : ((progress.coins || 0) < car.price ? 'disabled' : '')}>
+                        ${owned.includes(car.id) ? '🚗 SELECT' : '💰 BUY'}
+                    </button>
+                `;
+                
+                grid.appendChild(card);
+                
+                // Load 3D model in viewer
+                setTimeout(() => createCarViewer(`viewer-${car.id}`, car), 100);
+            });
+        }
+        
+        function createCarViewer(elementId, carData) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+            
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            camera.position.set(0, 4, 10);
+            camera.lookAt(0, 0, 0);
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            container.appendChild(renderer.domElement);
+            
+            // Enhanced lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambient);
+            
+            const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            scene.add(mainLight);
+            
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            fillLight.position.set(-5, 5, -5);
+            scene.add(fillLight);
+            
+            // Ground plane
+            const groundGeometry = new THREE.PlaneGeometry(20, 20);
+            const groundMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x2a2a2a,
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -0.5;
+            ground.receiveShadow = true;
+            scene.add(ground);
+            
+            // Realistic car representation
+            const carGroup = new THREE.Group();
+            
+            // Car body - more detailed
+            const bodyGeom = new THREE.BoxGeometry(2.2, 1.4, 4.5);
+            const bodyMat = new THREE.MeshPhysicalMaterial({ 
+                color: carData.color,
+                metalness: 0.95,
+                roughness: 0.1,
+                clearcoat: 1.0,
+                clearcoatRoughness: 0.1,
+                envMapIntensity: 1.5
+            });
+            const body = new THREE.Mesh(bodyGeom, bodyMat);
+            body.position.y = 1.1;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            carGroup.add(body);
+            
+            // Car roof
+            const roofGeom = new THREE.BoxGeometry(1.9, 0.9, 2.2);
+            const roof = new THREE.Mesh(roofGeom, bodyMat);
+            roof.position.set(0, 2.3, -0.6);
+            roof.castShadow = true;
+            carGroup.add(roof);
+            
+            // Windshield
+            const windshieldGeom = new THREE.PlaneGeometry(1.8, 1.2);
+            const windshieldMat = new THREE.MeshPhysicalMaterial({
+                color: 0x88ccff,
+                transparent: true,
+                opacity: 0.3,
+                roughness: 0.1
+            });
+            const windshield = new THREE.Mesh(windshieldGeom, windshieldMat);
+            windshield.position.set(0, 2.1, 0.8);
+            windshield.rotation.x = -0.3;
+            carGroup.add(windshield);
+            
+            // Headlights
+            const headlightGeom = new THREE.SphereGeometry(0.25, 16, 16);
+            const headlightMat = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: 0xffffff,
+                emissiveIntensity: 1.5
+            });
+            
+            const leftHeadlight = new THREE.Mesh(headlightGeom, headlightMat);
+            leftHeadlight.position.set(-0.7, 1.2, 2.3);
+            carGroup.add(leftHeadlight);
+            
+            const rightHeadlight = new THREE.Mesh(headlightGeom, headlightMat);
+            rightHeadlight.position.set(0.7, 1.2, 2.3);
+            carGroup.add(rightHeadlight);
+            
+            // Detailed wheels with rims
+            const wheelGeom = new THREE.CylinderGeometry(0.6, 0.6, 0.5, 32);
+            const tireMat = new THREE.MeshStandardMaterial({ 
+                color: 0x1a1a1a,
+                roughness: 0.9
+            });
+            
+            const rimGeom = new THREE.CylinderGeometry(0.4, 0.4, 0.52, 16);
+            const rimMat = new THREE.MeshStandardMaterial({
+                color: 0xcccccc,
+                metalness: 0.9,
+                roughness: 0.2
+            });
+            
+            const wheelPositions = [
+                [-1.3, 0.6, 1.6],
+                [1.3, 0.6, 1.6],
+                [-1.3, 0.6, -1.6],
+                [1.3, 0.6, -1.6]
+            ];
+            
+            wheelPositions.forEach(pos => {
+                const tire = new THREE.Mesh(wheelGeom, tireMat);
+                tire.position.set(pos[0], pos[1], pos[2]);
+                tire.rotation.z = Math.PI / 2;
+                tire.castShadow = true;
+                carGroup.add(tire);
+                
+                const rim = new THREE.Mesh(rimGeom, rimMat);
+                rim.position.set(pos[0], pos[1], pos[2]);
+                rim.rotation.z = Math.PI / 2;
+                carGroup.add(rim);
+            });
+            
+            // Spoiler
+            const spoilerGeom = new THREE.BoxGeometry(2, 0.2, 0.3);
+            const spoiler = new THREE.Mesh(spoilerGeom, bodyMat);
+            spoiler.position.set(0, 1.8, -2.3);
+            spoiler.castShadow = true;
+            carGroup.add(spoiler);
+            
+            scene.add(carGroup);
+            
+            // Auto-rotate with smooth animation
+            let rotation = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                rotation += 0.005;
+                carGroup.rotation.y = rotation;
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+        
+        window.buyCar = function(carId) {
+            const car = carDatabase.find(c => c.id === carId);
+            const progress = JSON.parse(localStorage.getItem('racingGameProgress') || '{}');
+            
+            if ((progress.coins || 0) >= car.price) {
+                progress.coins = (progress.coins || 0) - car.price;
+                if (!progress.ownedCars) progress.ownedCars = ['sports'];
+                if (!progress.ownedCars.includes(carId)) progress.ownedCars.push(carId);
+                progress.currentCar = carId;
+                
+                localStorage.setItem('racingGameProgress', JSON.stringify(progress));
+                renderGarage();
+                alert(`✅ ${car.name} purchased!`);
+            } else {
+                alert(`❌ Not enough coins! Need ${car.price} coins.`);
+            }
+        };
+        
+        window.selectCar = function(carId) {
+            const progress = JSON.parse(localStorage.getItem('racingGameProgress') || '{}');
+            progress.currentCar = carId;
+            localStorage.setItem('racingGameProgress', JSON.stringify(progress));
+            renderGarage();
+        };
+        
+        renderGarage();
+    </script>
+</body>
+</html>

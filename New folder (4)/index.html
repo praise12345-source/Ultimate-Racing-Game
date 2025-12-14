@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏎️ Ultimate Racing - Main Menu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            font-family: 'Orbitron', monospace; 
+            overflow: hidden; 
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-container {
+            text-align: center;
+            z-index: 100;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255,215,0,0.8);
+            color: #ffd700;
+        }
+        
+        /* Show title only if logo image is not available */
+        .menu-logo + h1 {
+            display: none;
+        }
+        
+        .menu-logo img[style*="display: none"] ~ h1,
+        .menu-logo:has(img[style*="display: none"]) ~ h1 {
+            display: block;
+        }
+        
+        .subtitle {
+            font-size: 24px;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+        
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .menu-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: 4px solid #ffd700;
+            color: white;
+            padding: 20px 50px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
+            min-width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .menu-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(255,215,0,0.6);
+        }
+        
+        #bgCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .quick-stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #ffd700;
+            text-align: left;
+        }
+        
+        .quick-stats h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <div class="menu-container">
+        <h1>🏎️ ULTIMATE RACING</h1>
+        <p class="subtitle">Better Than Asphalt Experience</p>
+        <!-- IMAGE PLACEHOLDER: Replace src with your main menu background image path -->
+        <div class="menu-background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3;">
+            <img src="images/menu-background.png" alt="Menu Background" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';">
+        </div>
+        
+        <!-- IMAGE PLACEHOLDER: Replace src with your game logo image path for menu -->
+        <div class="menu-logo" style="margin-bottom: 20px;">
+            <img src="images/menu-logo.png" alt="Game Logo" style="max-width: 500px; width: 100%; height: auto; filter: drop-shadow(0 0 30px rgba(255,215,0,0.8));" onerror="this.style.display='none';">
+        </div>
+        
+        <div class="menu-buttons">
+            <a href="loading.html" class="menu-btn">▶️ PLAY RACE</a>
+            <a href="profile.html" class="menu-btn">👤 PROFILE</a>
+            <a href="garage.html" class="menu-btn">🏪 GARAGE</a>
+            <a href="settings.html" class="menu-btn">⚙️ SETTINGS</a>
+        </div>
+    </div>
+    <div class="quick-stats">
+        <h3>📊 Quick Stats</h3>
+        <div id="statsDisplay">Loading...</div>
+    </div>
+    
+    <script>
+        // Animated background
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                speed: Math.random() * 2 + 1,
+                size: Math.random() * 3 + 1
+            });
+        }
+        
+        function animate() {
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.y += p.speed;
+                if (p.y > canvas.height) p.y = -10;
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Load stats
+        try {
+            const data = JSON.parse(localStorage.getItem('racingGameProgress') || '{}');
+            document.getElementById('statsDisplay').innerHTML = `
+                <p>💰 Coins: ${data.coins || 0}</p>
+                <p>🏁 Level: ${(data.level || 0) + 1}/100</p>
+                <p>🚗 Car: ${data.currentCar || 'Default'}</p>
+            `;
+        } catch (e) {
+            document.getElementById('statsDisplay').innerHTML = '<p>No stats yet</p>';
+        }
+    </script>
+</body>
+</html>

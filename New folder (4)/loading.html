@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏎️ Ultimate Racing - Loading</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); 
+            font-family: 'Orbitron', monospace; 
+            overflow: hidden;
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .loading-container {
+            text-align: center;
+            z-index: 100;
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+        }
+        
+        .game-logo {
+            margin-bottom: 40px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* IMAGE PLACEHOLDER: Replace 'images/logo.png' with your game logo image */
+        .game-logo img {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 30px rgba(255,215,0,0.8));
+        }
+        
+        .game-title {
+            font-size: 64px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255,215,0,0.8);
+            color: #ffd700;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .loading-text {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            color: #ffd700;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 15px;
+            border: 3px solid #ffd700;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255,215,0,0.6);
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 800;
+            font-size: 16px;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+        
+        .loading-tips {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            min-height: 100px;
+        }
+        
+        .tip-text {
+            font-size: 18px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        .car-preview {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* IMAGE PLACEHOLDER: Replace 'images/car-preview.png' with your car preview image */
+        .car-preview img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(255,215,0,0.6));
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .sponsor-logos {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            opacity: 0.6;
+        }
+        
+        /* IMAGE PLACEHOLDER: Replace 'images/sponsor1.png', 'images/sponsor2.png', etc. with sponsor logos */
+        .sponsor-logos img {
+            height: 40px;
+            width: auto;
+            opacity: 0.7;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255,215,0,0.8); }
+            to { text-shadow: 0 0 40px rgba(255,215,0,1), 0 0 60px rgba(255,215,0,0.6); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .loading-steps {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .step {
+            margin: 5px 0;
+            transition: opacity 0.3s;
+        }
+        
+        .step.active {
+            color: #ffd700;
+            opacity: 1;
+            font-weight: 700;
+        }
+        
+        .step.completed {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <!-- IMAGE PLACEHOLDER: Replace src with your game logo image path -->
+        <div class="game-logo">
+            <img src="images/logo.png" alt="Ultimate Racing Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h1 class="game-title" style="display:none;">🏎️ ULTIMATE RACING</h1>
+        </div>
+        
+        <div class="game-title" style="display:none;">🏎️ ULTIMATE RACING</div>
+        
+        <div class="loading-text" id="loadingText">Loading game assets...</div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+        
+        <div class="loading-steps" id="loadingSteps">
+            <div class="step" id="step1">Initializing game engine...</div>
+            <div class="step" id="step2">Loading 3D models...</div>
+            <div class="step" id="step3">Loading textures...</div>
+            <div class="step" id="step4">Preparing race track...</div>
+            <div class="step" id="step5">Loading player car...</div>
+            <div class="step" id="step6">Almost ready...</div>
+        </div>
+        
+        <!-- IMAGE PLACEHOLDER: Replace src with your car preview image path -->
+        <div class="car-preview">
+            <img src="images/car-preview.png" alt="Car Preview" onerror="this.style.display='none';">
+        </div>
+        
+        <div class="loading-tips">
+            <div class="tip-text" id="tipText">💡 Tip: Use WASD or Arrow Keys to control your car</div>
+        </div>
+    </div>
+    
+    <!-- IMAGE PLACEHOLDER: Replace src attributes with your sponsor logo image paths -->
+    <div class="sponsor-logos">
+        <img src="images/sponsor1.png" alt="Sponsor 1" onerror="this.style.display='none';">
+        <img src="images/sponsor2.png" alt="Sponsor 2" onerror="this.style.display='none';">
+        <img src="images/sponsor3.png" alt="Sponsor 3" onerror="this.style.display='none';">
+    </div>
+    
+    <script>
+        const tips = [
+            "💡 Tip: Use WASD or Arrow Keys to control your car",
+            "🏎️ Tip: Collect coins to unlock new cars in the garage",
+            "⚡ Tip: Avoid obstacles to keep your race going",
+            "🎯 Tip: Drift around corners for bonus points",
+            "💰 Tip: Complete races to earn more coins",
+            "🏁 Tip: Higher levels unlock better rewards"
+        ];
+        
+        const steps = [
+            { id: 'step1', text: 'Initializing game engine...', duration: 500 },
+            { id: 'step2', text: 'Loading 3D models...', duration: 800 },
+            { id: 'step3', text: 'Loading textures...', duration: 600 },
+            { id: 'step4', text: 'Preparing race track...', duration: 700 },
+            { id: 'step5', text: 'Loading player car...', duration: 500 },
+            { id: 'step6', text: 'Almost ready...', duration: 400 }
+        ];
+        
+        let currentStep = 0;
+        let progress = 0;
+        let tipIndex = 0;
+        
+        function updateProgress(percent) {
+            progress = percent;
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = Math.floor(percent) + '%';
+        }
+        
+        function updateStep(stepIndex) {
+            // Mark previous steps as completed
+            for (let i = 0; i < stepIndex; i++) {
+                const step = document.getElementById(steps[i].id);
+                if (step) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                }
+            }
+            
+            // Mark current step as active
+            if (stepIndex < steps.length) {
+                const step = document.getElementById(steps[stepIndex].id);
+                if (step) {
+                    step.classList.add('active');
+                    document.getElementById('loadingText').textContent = steps[stepIndex].text;
+                }
+            }
+        }
+        
+        function changeTip() {
+            tipIndex = (tipIndex + 1) % tips.length;
+            document.getElementById('tipText').textContent = tips[tipIndex];
+        }
+        
+        function loadGame() {
+            // Simulate loading progress
+            const totalDuration = steps.reduce((sum, step) => sum + step.duration, 0);
+            let elapsed = 0;
+            
+            function processStep() {
+                if (currentStep < steps.length) {
+                    updateStep(currentStep);
+                    
+                    const stepDuration = steps[currentStep].duration;
+                    const stepStart = elapsed;
+                    const stepEnd = elapsed + stepDuration;
+                    
+                    const stepInterval = setInterval(() => {
+                        elapsed += 50;
+                        const stepProgress = Math.min((elapsed - stepStart) / stepDuration, 1);
+                        const overallProgress = ((currentStep + stepProgress) / steps.length) * 100;
+                        updateProgress(overallProgress);
+                        
+                        if (elapsed >= stepEnd) {
+                            clearInterval(stepInterval);
+                            currentStep++;
+                            if (currentStep < steps.length) {
+                                processStep();
+                            } else {
+                                // Loading complete
+                                updateProgress(100);
+                                document.getElementById('loadingText').textContent = 'Ready to race!';
+                                setTimeout(() => {
+                                    window.location.href = 'ultimate_racing_game.html';
+                                }, 500);
+                            }
+                        }
+                    }, 50);
+                }
+            }
+            
+            processStep();
+            
+            // Change tip every 3 seconds
+            setInterval(changeTip, 3000);
+        }
+        
+        // Start loading when page loads
+        window.addEventListener('load', () => {
+            setTimeout(loadGame, 500);
+        });
+        
+        // Show title if logo image fails to load
+        window.addEventListener('load', () => {
+            const logoImg = document.querySelector('.game-logo img');
+            if (logoImg && logoImg.complete && logoImg.naturalHeight === 0) {
+                document.querySelector('.game-title').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👤 Player Profile - Ultimate Racing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            font-family: 'Orbitron', monospace; 
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .panel {
+            background: rgba(0,0,0,0.7);
+            border: 4px solid #ffd700;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        h1 { color: #ffd700; margin-bottom: 20px; font-size: 36px; }
+        h2 { color: #ffd700; margin-bottom: 15px; font-size: 24px; }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: 3px solid #ffd700;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            z-index: 1000;
+        }
+        
+        #playerModelContainer {
+            width: 100%;
+            height: 600px;
+            background: rgba(20,20,30,0.9);
+            border-radius: 15px;
+            position: relative;
+        }
+        
+        .model-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .control-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .control-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .control-item input[type="range"],
+        .control-item select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            background: #222;
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255,215,0,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #ffd700;
+            text-align: center;
+        }
+        
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+        
+        .stat-card .label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .player-name-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            border-radius: 10px;
+            border: 3px solid #ffd700;
+            background: #222;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .preset-btn {
+            padding: 12px;
+            background: rgba(255,215,0,0.2);
+            border: 2px solid #ffd700;
+            color: white;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .preset-btn:hover {
+            background: rgba(255,215,0,0.4);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">⬅️ Back to Menu</a>
+    
+    <!-- IMAGE PLACEHOLDER: Replace src with your profile background image path -->
+    <div class="page-background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2;">
+        <img src="images/profile-background.png" alt="Profile Background" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';">
+    </div>
+    
+    <div class="container">
+        <!-- IMAGE PLACEHOLDER: Replace src with your profile header logo/image path -->
+        <div style="text-align: center; margin-bottom: 20px; grid-column: 1 / -1;">
+            <img src="images/profile-header.png" alt="Profile Header" style="max-width: 400px; width: 100%; height: auto;" onerror="this.style.display='none';">
+        </div>
+        <div class="panel">
+            <h1>👤 Player Profile</h1>
+            <input type="text" id="playerName" class="player-name-input" placeholder="Enter your name..." />
+            
+            <h2>📊 Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="value" id="totalRaces">0</div>
+                    <div class="label">Races Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalWins">0</div>
+                    <div class="label">Victories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalCoins">0</div>
+                    <div class="label">Total Coins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="bestDistance">0</div>
+                    <div class="label">Best Distance (m)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalDrift">0</div>
+                    <div class="label">Total Drift Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="unlockedLevels">1</div>
+                    <div class="label">Levels Unlocked</div>
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 30px;">🎨 Customize Player Model</h2>
+            <div class="model-controls">
+                <div class="control-item">
+                    <label>Body Type</label>
+                    <select id="bodyType">
+                        <option value="athletic">Athletic</option>
+                        <option value="muscular">Muscular</option>
+                        <option value="slim">Slim</option>
+                        <option value="curvy">Curvy</option>
+                        <option value="tall">Tall</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Skin Color</label>
+                    <input type="range" id="skinColor" min="0" max="100" value="50" />
+                </div>
+                <div class="control-item">
+                    <label>Hair Style</label>
+                    <select id="hairStyle">
+                        <option value="short">Short</option>
+                        <option value="medium">Medium</option>
+                        <option value="long">Long</option>
+                        <option value="curly">Curly</option>
+                        <option value="spiky">Spiky</option>
+                        <option value="bald">Bald</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Hair Color</label>
+                    <input type="color" id="hairColor" value="#8B4513" />
+                </div>
+                <div class="control-item">
+                    <label>Eye Color</label>
+                    <input type="color" id="eyeColor" value="#0000FF" />
+                </div>
+                <div class="control-item">
+                    <label>Outfit Style</label>
+                    <select id="outfitStyle">
+                        <option value="racing">Racing Suit</option>
+                        <option value="casual">Casual</option>
+                        <option value="formal">Formal</option>
+                        <option value="street">Streetwear</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Outfit Color</label>
+                    <input type="color" id="outfitColor" value="#FF0000" />
+                </div>
+                <div class="control-item">
+                    <label>Secondary Color</label>
+                    <input type="color" id="secondaryColor" value="#000000" />
+                </div>
+                <div class="control-item">
+                    <label>Accessories</label>
+                    <select id="accessories">
+                        <option value="none">None</option>
+                        <option value="helmet">Helmet</option>
+                        <option value="glasses">Glasses</option>
+                        <option value="cap">Cap</option>
+                        <option value="sunglasses">Sunglasses</option>
+                        <option value="watch">Watch</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Height</label>
+                    <input type="range" id="height" min="0.8" max="1.2" step="0.05" value="1" />
+                </div>
+                <div class="control-item">
+                    <label>Body Size</label>
+                    <input type="range" id="bodySize" min="0.8" max="1.2" step="0.05" value="1" />
+                </div>
+                <div class="control-item">
+                    <label>Facial Features</label>
+                    <select id="faceType">
+                        <option value="default">Default</option>
+                        <option value="sharp">Sharp</option>
+                        <option value="round">Round</option>
+                        <option value="square">Square</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Eye Size</label>
+                    <input type="range" id="eyeSize" min="0.8" max="1.3" step="0.1" value="1" />
+                </div>
+                <div class="control-item">
+                    <label>Mouth Style</label>
+                    <select id="mouthStyle">
+                        <option value="neutral">Neutral</option>
+                        <option value="smile">Smile</option>
+                        <option value="serious">Serious</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Beard (Male)</label>
+                    <select id="beard">
+                        <option value="none">None</option>
+                        <option value="stubble">Stubble</option>
+                        <option value="short">Short</option>
+                        <option value="full">Full</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>Makeup (Female)</label>
+                    <select id="makeup">
+                        <option value="none">None</option>
+                        <option value="light">Light</option>
+                        <option value="medium">Medium</option>
+                        <option value="heavy">Heavy</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 2px solid #ffd700;">
+                <h3 style="color: #ffd700; margin-bottom: 15px;">📸 Avatar Presets</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <button onclick="applyPreset('racer')" class="preset-btn">🏎️ Racer</button>
+                    <button onclick="applyPreset('street')" class="preset-btn">🏙️ Street</button>
+                    <button onclick="applyPreset('elite')" class="preset-btn">👑 Elite</button>
+                </div>
+            </div>
+            
+            <button onclick="saveProfile()" style="margin-top: 20px; width: 100%; padding: 15px; background: linear-gradient(45deg, #667eea, #764ba2); border: 3px solid #ffd700; color: white; border-radius: 12px; font-weight: 800; font-size: 18px; cursor: pointer;">💾 Save Profile</button>
+        </div>
+        
+        <div class="panel">
+            <h2>🎮 3D Player Model</h2>
+            <div id="playerModelContainer"></div>
+            <p style="margin-top: 15px; text-align: center; opacity: 0.8;">Rotate: Click & Drag | Zoom: Mouse Wheel</p>
+        </div>
+    </div>
+    
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+        import { OrbitControls } from 'https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js';
+        
+        let scene, camera, renderer, controls, playerModel;
+        
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+            
+            camera = new THREE.PerspectiveCamera(75, 600/600, 0.1, 1000);
+            camera.position.set(0, 5, 10);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(600, 600);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            document.getElementById('playerModelContainer').appendChild(renderer.domElement);
+            
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.target.set(0, 3, 0);
+            
+            // Enhanced lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambient);
+            
+            const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            mainLight.position.set(10, 15, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            mainLight.shadow.camera.near = 0.5;
+            mainLight.shadow.camera.far = 50;
+            mainLight.shadow.camera.left = -10;
+            mainLight.shadow.camera.right = 10;
+            mainLight.shadow.camera.top = 10;
+            mainLight.shadow.camera.bottom = -10;
+            scene.add(mainLight);
+            
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            fillLight.position.set(-10, 5, -5);
+            scene.add(fillLight);
+            
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            rimLight.position.set(0, 5, -10);
+            scene.add(rimLight);
+            
+            createPlayerModel();
+            loadProfile();
+            
+            animate();
+        }
+        
+        function createPlayerModel(customization = {}) {
+            if (playerModel) scene.remove(playerModel);
+            
+            const group = new THREE.Group();
+            
+            // Body (torso) - more realistic proportions
+            const bodyGeom = new THREE.BoxGeometry(1.2, 2.2, 0.9);
+            const bodyMat = new THREE.MeshStandardMaterial({ 
+                color: customization.skinColor || 0xffdbac,
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const body = new THREE.Mesh(bodyGeom, bodyMat);
+            body.position.y = 3.1;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            group.add(body);
+            
+            // Head - more detailed
+            const headGeom = new THREE.SphereGeometry(0.55, 32, 32);
+            const headMat = new THREE.MeshStandardMaterial({ 
+                color: customization.skinColor || 0xffdbac,
+                roughness: 0.8,
+                metalness: 0.05
+            });
+            const head = new THREE.Mesh(headGeom, headMat);
+            head.position.set(0, 4.6, 0);
+            head.castShadow = true;
+            head.receiveShadow = true;
+            group.add(head);
+            
+            // Eyes
+            const eyeGeom = new THREE.SphereGeometry(0.08, 16, 16);
+            const eyeMat = new THREE.MeshStandardMaterial({ 
+                color: customization.eyeColor || 0x0000ff,
+                roughness: 0.3,
+                metalness: 0.1
+            });
+            const leftEye = new THREE.Mesh(eyeGeom, eyeMat);
+            leftEye.position.set(-0.15, 4.65, 0.45);
+            group.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeom, eyeMat);
+            rightEye.position.set(0.15, 4.65, 0.45);
+            group.add(rightEye);
+            
+            // Hair
+            if (customization.hairStyle !== 'bald') {
+                const hairGeom = new THREE.SphereGeometry(0.52, 16, 16);
+                const hairMat = new THREE.MeshStandardMaterial({ 
+                    color: customization.hairColor || 0x8B4513,
+                    roughness: 0.9
+                });
+                const hair = new THREE.Mesh(hairGeom, hairMat);
+                hair.position.set(0, 4.7, 0);
+                hair.scale.set(1.1, 1.3, 1.1);
+                if (customization.hairStyle === 'long') hair.scale.y = 1.6;
+                group.add(hair);
+            }
+            
+            // Outfit (racing suit) - more realistic
+            const outfitGeom = new THREE.BoxGeometry(1.3, 1.9, 0.9);
+            const outfitMat = new THREE.MeshPhysicalMaterial({ 
+                color: customization.outfitColor || 0xff0000,
+                metalness: 0.4,
+                roughness: 0.6,
+                clearcoat: 0.3,
+                clearcoatRoughness: 0.5
+            });
+            const outfit = new THREE.Mesh(outfitGeom, outfitMat);
+            outfit.position.set(0, 2.6, 0);
+            outfit.castShadow = true;
+            outfit.receiveShadow = true;
+            group.add(outfit);
+            
+            // Outfit secondary color accents
+            const accentGeom = new THREE.BoxGeometry(1.32, 0.3, 0.92);
+            const accentMat = new THREE.MeshStandardMaterial({ 
+                color: customization.secondaryColor || 0x000000,
+                metalness: 0.5,
+                roughness: 0.4
+            });
+            const accent1 = new THREE.Mesh(accentGeom, accentMat);
+            accent1.position.set(0, 3.5, 0);
+            group.add(accent1);
+            
+            const accent2 = new THREE.Mesh(accentGeom, accentMat);
+            accent2.position.set(0, 1.8, 0);
+            group.add(accent2);
+            
+            // Arms
+            const armGeom = new THREE.CylinderGeometry(0.2, 0.2, 1.5, 8);
+            const armMat = new THREE.MeshStandardMaterial({ 
+                color: customization.skinColor || 0xffdbac,
+                roughness: 0.7
+            });
+            const leftArm = new THREE.Mesh(armGeom, armMat);
+            leftArm.position.set(-0.8, 2.5, 0);
+            leftArm.rotation.z = 0.3;
+            leftArm.castShadow = true;
+            group.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(armGeom, armMat);
+            rightArm.position.set(0.8, 2.5, 0);
+            rightArm.rotation.z = -0.3;
+            rightArm.castShadow = true;
+            group.add(rightArm);
+            
+            // Legs
+            const legGeom = new THREE.CylinderGeometry(0.25, 0.25, 2, 8);
+            const legMat = new THREE.MeshStandardMaterial({ 
+                color: customization.outfitColor || 0xff0000,
+                metalness: 0.3,
+                roughness: 0.5
+            });
+            const leftLeg = new THREE.Mesh(legGeom, legMat);
+            leftLeg.position.set(-0.4, 1, 0);
+            leftLeg.castShadow = true;
+            group.add(leftLeg);
+            
+            const rightLeg = new THREE.Mesh(legGeom, legMat);
+            rightLeg.position.set(0.4, 1, 0);
+            rightLeg.castShadow = true;
+            group.add(rightLeg);
+            
+            // Accessories
+            if (customization.accessories === 'helmet') {
+                const helmetGeom = new THREE.SphereGeometry(0.55, 16, 16);
+                const helmetMat = new THREE.MeshStandardMaterial({ 
+                    color: 0x222222,
+                    metalness: 0.8,
+                    roughness: 0.2
+                });
+                const helmet = new THREE.Mesh(helmetGeom, helmetMat);
+                helmet.position.set(0, 4.5, 0);
+                helmet.scale.set(1.05, 1.05, 1.05);
+                group.add(helmet);
+            } else if (customization.accessories === 'glasses') {
+                const glassesGeom = new THREE.BoxGeometry(0.8, 0.15, 0.02);
+                const glassesMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
+                const glasses = new THREE.Mesh(glassesGeom, glassesMat);
+                glasses.position.set(0, 4.3, 0.35);
+                group.add(glasses);
+            }
+            
+            playerModel = group;
+            scene.add(playerModel);
+            
+            // Enhanced ground with texture
+            const ground = new THREE.PlaneGeometry(20, 20, 10, 10);
+            const groundMat = new THREE.MeshStandardMaterial({ 
+                color: 0x2a2a2a,
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const groundMesh = new THREE.Mesh(ground, groundMat);
+            groundMesh.rotation.x = -Math.PI / 2;
+            groundMesh.position.y = -0.1;
+            groundMesh.receiveShadow = true;
+            scene.add(groundMesh);
+            
+            // Add subtle grid pattern
+            const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
+            gridHelper.position.y = -0.05;
+            scene.add(gridHelper);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // UI controls
+        document.getElementById('bodyType').addEventListener('change', updateModel);
+        document.getElementById('skinColor').addEventListener('input', updateModel);
+        document.getElementById('hairStyle').addEventListener('change', updateModel);
+        document.getElementById('hairColor').addEventListener('input', updateModel);
+        document.getElementById('eyeColor').addEventListener('input', updateModel);
+        document.getElementById('outfitStyle').addEventListener('change', updateModel);
+        document.getElementById('outfitColor').addEventListener('input', updateModel);
+        document.getElementById('secondaryColor').addEventListener('input', updateModel);
+        document.getElementById('accessories').addEventListener('change', updateModel);
+        document.getElementById('height').addEventListener('input', updateModel);
+        document.getElementById('bodySize').addEventListener('input', updateModel);
+        document.getElementById('faceType').addEventListener('change', updateModel);
+        document.getElementById('eyeSize').addEventListener('input', updateModel);
+        document.getElementById('mouthStyle').addEventListener('change', updateModel);
+        document.getElementById('beard').addEventListener('change', updateModel);
+        document.getElementById('makeup').addEventListener('change', updateModel);
+        
+        function updateModel() {
+            const customization = {
+                bodyType: document.getElementById('bodyType').value,
+                skinColor: parseInt('0x' + getSkinColorHex(document.getElementById('skinColor').value)),
+                hairStyle: document.getElementById('hairStyle').value,
+                hairColor: document.getElementById('hairColor').value,
+                eyeColor: document.getElementById('eyeColor').value,
+                outfitStyle: document.getElementById('outfitStyle').value,
+                outfitColor: document.getElementById('outfitColor').value,
+                secondaryColor: document.getElementById('secondaryColor').value,
+                accessories: document.getElementById('accessories').value,
+                height: parseFloat(document.getElementById('height').value),
+                bodySize: parseFloat(document.getElementById('bodySize').value),
+                faceType: document.getElementById('faceType').value,
+                eyeSize: parseFloat(document.getElementById('eyeSize').value),
+                mouthStyle: document.getElementById('mouthStyle').value,
+                beard: document.getElementById('beard').value,
+                makeup: document.getElementById('makeup').value
+            };
+            createPlayerModel(customization);
+            saveProfile();
+        }
+        
+        function applyPreset(preset) {
+            if (preset === 'racer') {
+                document.getElementById('bodyType').value = 'athletic';
+                document.getElementById('outfitStyle').value = 'racing';
+                document.getElementById('outfitColor').value = '#FF0000';
+                document.getElementById('secondaryColor').value = '#000000';
+                document.getElementById('accessories').value = 'helmet';
+            } else if (preset === 'street') {
+                document.getElementById('bodyType').value = 'slim';
+                document.getElementById('outfitStyle').value = 'street';
+                document.getElementById('outfitColor').value = '#000000';
+                document.getElementById('secondaryColor').value = '#FFFFFF';
+                document.getElementById('accessories').value = 'cap';
+            } else if (preset === 'elite') {
+                document.getElementById('bodyType').value = 'muscular';
+                document.getElementById('outfitStyle').value = 'formal';
+                document.getElementById('outfitColor').value = '#000080';
+                document.getElementById('secondaryColor').value = '#FFD700';
+                document.getElementById('accessories').value = 'watch';
+            }
+            updateModel();
+        }
+        
+        function getSkinColorHex(value) {
+            const colors = ['8b4513','cd853f','deb887','f5deb3','ffdbac','ffe4cd','fff8dc','ffffff'];
+            const index = Math.min(Math.floor(value / 14.3), colors.length - 1);
+            return colors[index];
+        }
+        
+        function saveProfile() {
+            const profile = {
+                name: document.getElementById('playerName').value || 'Player',
+                bodyType: document.getElementById('bodyType').value,
+                skinColor: document.getElementById('skinColor').value,
+                hairStyle: document.getElementById('hairStyle').value,
+                hairColor: document.getElementById('hairColor').value,
+                eyeColor: document.getElementById('eyeColor').value,
+                outfitStyle: document.getElementById('outfitStyle').value,
+                outfitColor: document.getElementById('outfitColor').value,
+                secondaryColor: document.getElementById('secondaryColor').value,
+                accessories: document.getElementById('accessories').value,
+                height: document.getElementById('height').value,
+                bodySize: document.getElementById('bodySize').value,
+                faceType: document.getElementById('faceType').value,
+                eyeSize: document.getElementById('eyeSize').value,
+                mouthStyle: document.getElementById('mouthStyle').value,
+                beard: document.getElementById('beard').value,
+                makeup: document.getElementById('makeup').value
+            };
+            localStorage.setItem('playerProfile', JSON.stringify(profile));
+            
+            const stats = JSON.parse(localStorage.getItem('playerStats') || '{}');
+            stats.totalRaces = stats.totalRaces || 0;
+            stats.totalWins = stats.totalWins || 0;
+            localStorage.setItem('playerStats', JSON.stringify(stats));
+        }
+        
+        function loadProfile() {
+            try {
+                const profile = JSON.parse(localStorage.getItem('playerProfile') || '{}');
+                if (profile.name) document.getElementById('playerName').value = profile.name;
+                if (profile.bodyType) document.getElementById('bodyType').value = profile.bodyType;
+                if (profile.skinColor) document.getElementById('skinColor').value = profile.skinColor;
+                if (profile.hairStyle) document.getElementById('hairStyle').value = profile.hairStyle;
+                if (profile.hairColor) document.getElementById('hairColor').value = profile.hairColor;
+                if (profile.outfitColor) document.getElementById('outfitColor').value = profile.outfitColor;
+                if (profile.accessories) document.getElementById('accessories').value = profile.accessories;
+                
+                updateModel();
+                
+                const stats = JSON.parse(localStorage.getItem('playerStats') || '{}');
+                const progress = JSON.parse(localStorage.getItem('racingGameProgress') || '{}');
+                document.getElementById('totalRaces').textContent = stats.totalRaces || 0;
+                document.getElementById('totalWins').textContent = stats.totalWins || 0;
+                document.getElementById('totalCoins').textContent = progress.coins || 0;
+                document.getElementById('unlockedLevels').textContent = progress.unlockedLevels || 1;
+            } catch (e) {
+                console.warn('Failed to load profile', e);
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>
